@@ -10,12 +10,12 @@
     <x-errors />
 
     <div class="form-floating">
-        <input name="name" type="type" class="form-control" id="name" placeholder="Fullname">
+        <input value="{{old('name')}}" name="name" type="type" class="form-control" id="name" placeholder="Fullname">
         <label for="name">Fullname</label>
       </div>
 
     <div class="form-floating">
-      <input name="email" type="email" class="form-control" id="floatingInput" placeholder="name@example.com">
+      <input value="{{old('email')}}" name="email" type="email" class="form-control" id="floatingInput" placeholder="name@example.com">
       <label for="floatingInput">Email address</label>
     </div>
     <div class="form-floating">
