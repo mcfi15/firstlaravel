@@ -15,7 +15,7 @@ class PostController extends Controller
      */
     public function index()
     {
-        $posts = Post::all();
+        $posts = auth()->user()->posts()->paginate(1);
         return view('posts.index', [
             'posts' => $posts,
         ]);
@@ -39,13 +39,26 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
-        $post = new Post();
-        $post->slug = Str::slug($request->input('title'));
-        $post->title = $request->input('title');
-        $post->body = $request->input('body');
-        $post->image = 'dflkdlf.png';
+        $request->validate([
+            'title' => ['required', 'unique:posts', 'min:5'],
+            'body' => ['required', 'string', 'min:5'],
+            'image' => ['required', 'image', 'mimes:png,jpg,jpeg,gif']
+            // 'image' => "required|image|mimes:png,jpg,jpeg,gif"
 
-        $post->save();
+        ]);
+
+        $data = $request->only('title', 'body');
+        $slug = Str::slug($request->input('title'));
+
+        Post::create(
+            array_merge($data, [
+                'slug' => $slug,
+                'user_id' => auth()->user()->id,
+                'image' => 'default.png'
+            ])
+        );
+
+        session()->flash('success', 'Post created successfully');
         return redirect()->route('posts.index');
     }
 

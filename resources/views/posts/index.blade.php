@@ -26,6 +26,8 @@
             <div class="card shadow">
                 <div class="card-body">
 
+                    <x-alerts />
+
                     <div class="text-end">
                         <a href="{{route('posts.create')}}" class="btn btn-primary btn-sm py-3">
                             <i class="fa fa-plus"></i>
@@ -75,6 +77,8 @@
 
 
                     </table>
+
+                    {{$posts->links()}}
 
                 </div>
             </div>
