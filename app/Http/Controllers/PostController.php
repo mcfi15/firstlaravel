@@ -54,7 +54,7 @@ class PostController extends Controller
             array_merge($data, [
                 'slug' => $slug,
                 'user_id' => auth()->user()->id,
-                'image' => 'default.png'
+                'image' => $request->file('image')->store('blog_images', 'public')
             ])
         );
 
@@ -94,9 +94,33 @@ class PostController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $request->validate([
+            'title' => ['required', 'unique:posts,title,' .$id, 'min:5'],
+            'body' => ['required', 'string', 'min:5'],
+            'image' => ['nullable', 'image', 'mimes:png,jpg,jpeg,gif']
+            // 'image' => "required|image|mimes:png,jpg,jpeg,gif"
+
+        ]);
+
         $post = Post::findOrFail($id);
 
-        $post->update($request->only('title', 'body'));
+        $data = $request->only('title', 'body');
+
+        if ($request->hasFile('image')) {
+            $data = array_merge($data, [
+                'image' => $request->file('image')->store('blog_images', 'public')
+            ]);
+            if(file_exists($file = storage_path('app/public' . $post->image))){
+                unlink($file);
+            }
+        }
+
+
+
+
+        $post->update($data);
+
+        session()->flash('success', 'Post updated successfully');
 
         return redirect()->route('posts.index');
 
